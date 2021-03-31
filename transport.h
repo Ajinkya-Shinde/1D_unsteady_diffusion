@@ -11,6 +11,6 @@ public:
 	}
 
 	void print() {
-		std::cout << x << ' ' << this->old << ' ' << this->updated << std::endl;
+		std::cout << x << '\t' << this->old << '\t' << this->updated << std::endl;
 	}
 };

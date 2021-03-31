@@ -1,83 +1,28 @@
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include "transport.h"
 
 #define PI 3.1415926
 
-/*double* init_array(int);
-double* init_temp(double*, int);
-double* solve_diff(double*, double*, int, double, double);
-void print_array(double*, int);*/
-
 Node* initialize(int);
 void print_node(Node*, int);
-
+void solve_diff(Node*, int, double, double);
+void write_csv(Node*, int);
 
 int main() {
-	int N = 11;
-	double del_t = 0.0001;
-
-	/*double* x = new double[N];
-	double* T= new double[N];
-	x = init_array(N);
-	T = init_temp(x, N);
-	double* sol = new double[N];
-	sol = solve_diff(x, T, N, del_t, 2);
-	print_array(sol,N);
-	//print_array(x, N);
-	//print_array(T, N);
-	delete [] x;
-	delete [] T;*/
+	int N = 101, num_itr = 5000;
+	double delta_t = 0.00001;
 
 	Node* u = new Node[N];
 	u = initialize(N);
 	print_node(u, N);
-
-}
-//============================================================================================================
-/*double* init_array(int N) {
-	double* ptr = new double[N];
-	double step = 1 / ((double)(N-1));
-	for (int i{ 0 }; i < N; i++) {
-		ptr[i] = step * i;
-	}
-	return ptr;
+	solve_diff(u, N, delta_t, num_itr);
+	//print_node(u, N);
+	write_csv(u, N);
+		
 }
 
-double* init_temp(double* x, int N) {
-	double* ptr = new double[N];
-	double step = 1 / (double)(N - 1);
-	for (int i{ 0 }; i < N; i++) {
-		ptr[i] = sin(2*PI*x[i]);
-	}
-	return ptr;
-}
-
-double* solve_diff(double* x, double* T, const int N, double time_step, double time) {
-	double step = 1 / (double)(N - 1);
-	double* T_up=new double[N];
-	T_up[0] = T[0];
-	T_up[N - 1] = T[N - 1];
-	for (int j = 0; j<int(time / time_step); j++) {
-		for (int i = 1; i < N-1 ; i++) {
-
-			T_up[i] = (time_step / (2 * step)) * (T[i + 1] - 2 * T[i] + T[i - 1]) + T[i];
-
-		}
-		for (int i = 1; i < N-1; i++) {
-			T[i] = T_up[i];
-		}
-	}
-	return T_up;
-}
-
-void print_array(double* ptr, int N) {
-	for (int i{ 0 }; i < N; i++) {
-		std::cout << ptr[i] << ' ';
-	}
-	std::cout << std::endl;
-}*/
-//===================================================================================================================
 
 Node* initialize(int N) {
 	Node* ptr = new Node[N];
@@ -89,9 +34,36 @@ Node* initialize(int N) {
 	}
 	return ptr;
 }
-
+ 
 void print_node(Node* u, int N) {
 	for (int i = 0; i < N; i++) {
 		u[i].print();
 	}
+}
+
+void solve_diff(Node* u, int N, double time_step, double num_itr) {
+	double step = 1 / double(N - 1);
+	double k;
+	k = (time_step / ( pow(step,2)));
+	
+	for (int j = 1; j < num_itr + 1; j++) {
+		for (int i = 1; i < N - 1; i++) {
+			u[i].updated = k * (u[i + 1].old - 2 * u[i].old + u[i - 1].old) + u[i].old;
+		}
+		for (int i = 1; i < N - 1; i++) {
+			u[i].copy();
+		}
+		//if (num_itr % 1000 == 0) {write_csv(u)}
+	}
+	
+}
+
+void write_csv(Node* u, int N) {
+	std::fstream fout;
+	fout.open("solution_1d.csv", std::ios::out | std::ios::app);
+
+	for (int i = 0; i < N; i++) {
+		fout << u[i].updated << ',';
+	}
+	fout << '\n';
 }
