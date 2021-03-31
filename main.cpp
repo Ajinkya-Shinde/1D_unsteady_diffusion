@@ -1,17 +1,23 @@
 #include <iostream>
 #include <cmath>
+#include "transport.h"
 
 #define PI 3.1415926
 
-double* init_array(int);
+/*double* init_array(int);
 double* init_temp(double*, int);
 double* solve_diff(double*, double*, int, double, double);
-void print_array(double*, int);
+void print_array(double*, int);*/
+
+Node* initialize(int);
+void print_node(Node*, int);
+
 
 int main() {
-	int N = 50;
+	int N = 11;
 	double del_t = 0.0001;
-	double* x = new double[N];
+
+	/*double* x = new double[N];
 	double* T= new double[N];
 	x = init_array(N);
 	T = init_temp(x, N);
@@ -21,10 +27,15 @@ int main() {
 	//print_array(x, N);
 	//print_array(T, N);
 	delete [] x;
-	delete [] T;
-}
+	delete [] T;*/
 
-double* init_array(int N) {
+	Node* u = new Node[N];
+	u = initialize(N);
+	print_node(u, N);
+
+}
+//============================================================================================================
+/*double* init_array(int N) {
 	double* ptr = new double[N];
 	double step = 1 / ((double)(N-1));
 	for (int i{ 0 }; i < N; i++) {
@@ -65,4 +76,22 @@ void print_array(double* ptr, int N) {
 		std::cout << ptr[i] << ' ';
 	}
 	std::cout << std::endl;
+}*/
+//===================================================================================================================
+
+Node* initialize(int N) {
+	Node* ptr = new Node[N];
+	double step = 1 / double(N - 1);
+	for (int i = 0; i < N; i++) {
+		ptr[i].x = (step * i);
+		ptr[i].old = sin(2 * PI * ptr[i].x);
+		ptr[i].updated = 0.0;
+	}
+	return ptr;
+}
+
+void print_node(Node* u, int N) {
+	for (int i = 0; i < N; i++) {
+		u[i].print();
+	}
 }
