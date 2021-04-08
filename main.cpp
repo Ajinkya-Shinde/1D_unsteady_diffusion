@@ -8,18 +8,19 @@
 Node* initialize(int);
 void print_node(Node*, int);
 void solve_diff(Node*, int, double, double);
-void write_csv(Node*, int);
+void write_csv(Node*, int , char);
 
 int main() {
-	int N = 101, num_itr = 5000;
+	int N = 128, num_itr = 1000;
 	double delta_t = 0.00001;
 
 	Node* u = new Node[N];
 	u = initialize(N);
+	//write_csv(u, N, 'o');
 	print_node(u, N);
 	solve_diff(u, N, delta_t, num_itr);
 	//print_node(u, N);
-	write_csv(u, N);
+	write_csv(u, N,'u');
 		
 }
 
@@ -58,12 +59,21 @@ void solve_diff(Node* u, int N, double time_step, double num_itr) {
 	
 }
 
-void write_csv(Node* u, int N) {
+void write_csv(Node* u, int N, char c) {
 	std::fstream fout;
 	fout.open("solution_1d.csv", std::ios::out | std::ios::app);
 
-	for (int i = 0; i < N; i++) {
-		fout << u[i].updated << ',';
+	if (c == 'o') {
+		for (int i = 0; i < N; i++) {
+			fout << u[i].old << ',';
+		}
+		fout << '\n';
 	}
-	fout << '\n';
+	else {
+		for (int i = 0; i < N; i++) {
+			fout << u[i].updated << ',';
+		}
+		fout << '\n';
+	}
+	
 }
